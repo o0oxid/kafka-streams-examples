@@ -15,6 +15,7 @@
  */
 package io.confluent.examples.streams.interactivequeries;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
@@ -148,8 +149,8 @@ public class WordCountInteractiveQueriesExample {
   static final String DEFAULT_HOST = "localhost";
 
   public static void main(final String[] args) throws Exception {
-    if (args.length == 0 || args.length > 2) {
-      throw new IllegalArgumentException("usage: ... <portForRestEndPoint> [<bootstrap.servers> (optional)]");
+    if (args.length == 0 || args.length > 3) {
+      throw new IllegalArgumentException("usage: ... <portForRestEndPoint> [<bootstrap.servers> (optional)] [<group.member.id> (optional)]");
     }
     final int port = Integer.parseInt(args[0]);
     final String bootstrapServers = args.length > 1 ? args[1] : "localhost:9092";
@@ -170,6 +171,10 @@ public class WordCountInteractiveQueriesExample {
     streamsConfiguration.put(StreamsConfig.APPLICATION_SERVER_CONFIG, DEFAULT_HOST + ":" + port);
     final File example = Files.createTempDirectory(new File("/tmp").toPath(), "example").toFile();
     streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, example.getPath());
+
+    if (args.length > 2) {
+      streamsConfiguration.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, args[2]);
+    }
 
     final KafkaStreams streams = createStreams(streamsConfiguration);
     // Always (and unconditionally) clean local state prior to starting the processing topology.
