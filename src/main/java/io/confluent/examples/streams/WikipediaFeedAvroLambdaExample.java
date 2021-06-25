@@ -16,7 +16,7 @@
 package io.confluent.examples.streams;
 
 import io.confluent.examples.streams.avro.WikiFeed;
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
@@ -55,7 +55,7 @@ import java.util.Properties;
  * Once packaged you can then run:
  * <pre>
  * {@code
- * $ java -cp target/kafka-streams-examples-5.4.0-standalone.jar io.confluent.examples.streams.WikipediaFeedAvroLambdaExample
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar io.confluent.examples.streams.WikipediaFeedAvroLambdaExample
  * }
  * </pre>
  * 4) Write some input data to the source topics (e.g. via {@link WikipediaFeedAvroExampleDriver}).
@@ -66,7 +66,7 @@ import java.util.Properties;
  * {@code
  * # Here: Write input data using the example driver.  Once the driver has stopped generating data,
  * # you can terminate it via Ctrl-C.
- * $ java -cp target/kafka-streams-examples-5.4.0-standalone.jar io.confluent.examples.streams.WikipediaFeedAvroExampleDriver
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar io.confluent.examples.streams.WikipediaFeedAvroExampleDriver
  * }
  * </pre>
  */
@@ -82,7 +82,7 @@ public class WikipediaFeedAvroLambdaExample {
     // Always (and unconditionally) clean local state prior to starting the processing topology.
     // We opt for this unconditional call here because this will make it easier for you to play around with the example
     // when resetting the application for doing a re-run (via the Application Reset Tool,
-    // http://docs.confluent.io/current/streams/developer-guide.html#application-reset-tool).
+    // https://docs.confluent.io/platform/current/streams/developer-guide/app-reset-tool.html).
     //
     // The drawback of cleaning up local state prior is that your app must rebuilt its local state from scratch, which
     // will take time and will require reading all the state-relevant data from the Kafka cluster over the network.
@@ -107,7 +107,7 @@ public class WikipediaFeedAvroLambdaExample {
     // Where to find Kafka broker(s).
     streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     // Where to find the Confluent schema registry instance(s)
-    streamsConfiguration.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
+    streamsConfiguration.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
     // Specify default (de)serializers for record keys and for record values.
     streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
     streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);

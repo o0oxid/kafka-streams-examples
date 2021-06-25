@@ -84,7 +84,7 @@ import java.util.Properties;
  *
  * <pre>
  * {@code
- * $ java -cp target/kafka-streams-examples-5.4.0-standalone.jar \
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar \
  *      io.confluent.examples.streams.interactivequeries.WordCountInteractiveQueriesExample 7070
  * }
  * </pre>
@@ -95,7 +95,7 @@ import java.util.Properties;
  *
  * <pre>
  * {@code
- * $ java -cp target/kafka-streams-examples-5.4.0-standalone.jar \
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar \
  *      io.confluent.examples.streams.interactivequeries.WordCountInteractiveQueriesExample 7071
  * }
  * </pre>
@@ -180,7 +180,7 @@ public class WordCountInteractiveQueriesExample {
     // Always (and unconditionally) clean local state prior to starting the processing topology.
     // We opt for this unconditional call here because this will make it easier for you to play around with the example
     // when resetting the application for doing a re-run (via the Application Reset Tool,
-    // http://docs.confluent.io/current/streams/developer-guide.html#application-reset-tool).
+    // https://docs.confluent.io/platform/current/streams/developer-guide/app-reset-tool.html).
     //
     // The drawback of cleaning up local state prior is that your app must rebuilt its local state from scratch, which
     // will take time and will require reading all the state-relevant data from the Kafka cluster over the network.

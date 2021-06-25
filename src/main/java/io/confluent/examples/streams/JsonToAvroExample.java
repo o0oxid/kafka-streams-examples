@@ -15,11 +15,11 @@
  */
 package io.confluent.examples.streams;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.confluent.examples.streams.avro.WikiFeed;
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
-import java.io.IOException;
-import java.util.Properties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -27,8 +27,9 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * A simple example demonstrating how to convert records in JSON format in a given topic to records
@@ -56,7 +57,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  * Once packaged you can then run:
  * <pre>
  * {@code
- * $ java -cp target/kafka-streams-examples-5.4.0-SNAPSHOT-standalone.jar io.confluent.examples.streams.JsonToAvroExample
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar io.confluent.examples.streams.JsonToAvroExample
  * }
  * </pre>
  * 4) Write some input data to the source topics (e.g. via {@link JsonToAvroExampleDriver}). The
@@ -67,7 +68,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  * {@code
  * # Here: Write input data using the example driver.  Once the driver has stopped generating data,
  * # you can terminate it via Ctrl-C.
- * $ java -cp target/kafka-streams-examples-5.4.0-SNAPSHOT-standalone.jar io.confluent.examples.streams.JsonToAvroExampleDriver
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar io.confluent.examples.streams.JsonToAvroExampleDriver
  * }
  * </pre>
  */
@@ -97,7 +98,7 @@ public class JsonToAvroExample {
     streamsConfiguration.put(StreamsConfig.CLIENT_ID_CONFIG, "json-to-avro-stream-conversion-client");
     streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     // Where to find the Confluent schema registry instance(s)
-    streamsConfiguration.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
+    streamsConfiguration.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
 
     streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
     streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());

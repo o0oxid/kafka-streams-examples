@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='kafka-streams-examples-tests',
-    version='5.4.0-SNAPSHOT',
+    version='3.3.0',
 
     author="Confluent, Inc.",
     author_email="tools@confluent.io",

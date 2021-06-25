@@ -49,10 +49,10 @@ import java.util.regex.Pattern;
  * 2) Create the input and output topics used by this example.
  * <pre>
  * {@code
- * $ bin/kafka-topics --create --topic streams-plaintext-input \
- *                    --zookeeper localhost:2181 --partitions 1 --replication-factor 1
- * $ bin/kafka-topics --create --topic streams-wordcount-output \
- *                    --zookeeper localhost:2181 --partitions 1 --replication-factor 1
+ * $ bin/kafka-topics --bootstrap-server localhost:9092 --create --topic streams-plaintext-input \
+ *                   --partitions 1 --replication-factor 1
+ * $ bin/kafka-topics --bootstrap-server localhost:9092 --create --topic streams-wordcount-output \
+ *                   --partitions 1 --replication-factor 1
  * }</pre>
  * Note: The above commands are for the Confluent Platform. For Apache Kafka it should be {@code bin/kafka-topics.sh ...}.
  * <p>
@@ -62,7 +62,7 @@ import java.util.regex.Pattern;
  * Once packaged you can then run:
  * <pre>
  * {@code
- * $ java -cp target/kafka-streams-examples-5.4.0-standalone.jar io.confluent.examples.streams.WordCountLambdaExample
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar io.confluent.examples.streams.WordCountLambdaExample
  * }
  * </pre>
  * 4) Write some input data to the source topic "streams-plaintext-input" (e.g. via {@code kafka-console-producer}).
@@ -131,7 +131,7 @@ public class WordCountLambdaExample {
     // Always (and unconditionally) clean local state prior to starting the processing topology.
     // We opt for this unconditional call here because this will make it easier for you to play around with the example
     // when resetting the application for doing a re-run (via the Application Reset Tool,
-    // http://docs.confluent.io/current/streams/developer-guide.html#application-reset-tool).
+    // https://docs.confluent.io/platform/current/streams/developer-guide/app-reset-tool.html).
     //
     // The drawback of cleaning up local state prior is that your app must rebuilt its local state from scratch, which
     // will take time and will require reading all the state-relevant data from the Kafka cluster over the network.

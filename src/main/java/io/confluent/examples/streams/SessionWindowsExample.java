@@ -16,7 +16,7 @@
 package io.confluent.examples.streams;
 
 import io.confluent.examples.streams.avro.PlayEvent;
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
@@ -70,7 +70,7 @@ import static java.util.Collections.singletonMap;
  * Once packaged you can then run:
  * <pre>
  * {@code
- * $ java -cp target/kafka-streams-examples-5.4.0-standalone.jar io.confluent.examples.streams.SessionWindowsExample
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar io.confluent.examples.streams.SessionWindowsExample
  * }
  * </pre>
  * 4) Write some input data to the source topics (e.g. via {@link SessionWindowsExampleDriver}). The
@@ -80,7 +80,7 @@ import static java.util.Collections.singletonMap;
  * {@code
  * # Here: Write input data using the example driver. The driver will also consume, and print, the data from the output
  * topic. The driver will stop when it has received all output records
- * $ java -cp target/kafka-streams-examples-5.4.0-standalone.jar io.confluent.examples.streams.SessionWindowsExampleDriver
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar io.confluent.examples.streams.SessionWindowsExampleDriver
  * }
  * </pre>
  * You should see output data similar to:
@@ -115,14 +115,14 @@ public class SessionWindowsExample {
     final String bootstrapServers = args.length > 0 ? args[0] : "localhost:9092";
     final String schemaRegistryUrl = args.length > 1 ? args[1] : "http://localhost:8081";
     final KafkaStreams streams = new KafkaStreams(
-      buildTopology(singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl)),
+      buildTopology(singletonMap(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl)),
       streamsConfig(bootstrapServers, "/tmp/kafka-streams")
     );
 
     // Always (and unconditionally) clean local state prior to starting the processing topology.
     // We opt for this unconditional call here because this will make it easier for you to play around with the example
     // when resetting the application for doing a re-run (via the Application Reset Tool,
-    // http://docs.confluent.io/current/streams/developer-guide.html#application-reset-tool).
+    // https://docs.confluent.io/platform/current/streams/developer-guide/app-reset-tool.html).
     //
     // The drawback of cleaning up local state prior is that your app must rebuilt its local state from scratch, which
     // will take time and will require reading all the state-relevant data from the Kafka cluster over the network.

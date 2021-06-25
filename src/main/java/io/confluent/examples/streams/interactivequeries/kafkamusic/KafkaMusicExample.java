@@ -18,7 +18,7 @@ package io.confluent.examples.streams.interactivequeries.kafkamusic;
 import io.confluent.examples.streams.avro.PlayEvent;
 import io.confluent.examples.streams.avro.Song;
 import io.confluent.examples.streams.avro.SongPlayCount;
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Deserializer;
@@ -110,7 +110,7 @@ import static java.util.Collections.singletonMap;
  *
  * <pre>
  * {@code
- * $ java -cp target/kafka-streams-examples-5.4.0-standalone.jar \
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar \
  *      io.confluent.examples.streams.interactivequeries.kafkamusic.KafkaMusicExample 7070
  * }
  * </pre>
@@ -121,7 +121,7 @@ import static java.util.Collections.singletonMap;
  *
  * <pre>
  * {@code
- * $ java -cp target/kafka-streams-examples-5.4.0-standalone.jar \
+ * $ java -cp target/kafka-streams-examples-6.2.0-standalone.jar \
  *      io.confluent.examples.streams.interactivequeries.kafkamusic.KafkaMusicExample 7071
  * }
  * </pre>
@@ -200,14 +200,14 @@ public class KafkaMusicExample {
     System.out.println("REST endpoint at http://" + restEndpointHostname + ":" + restEndpointPort);
 
     final KafkaStreams streams = new KafkaStreams(
-      buildTopology(singletonMap(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl)),
+      buildTopology(singletonMap(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl)),
       streamsConfig(bootstrapServers, restEndpointPort, "/tmp/kafka-streams", restEndpointHostname)
     );
 
     // Always (and unconditionally) clean local state prior to starting the processing topology.
     // We opt for this unconditional call here because this will make it easier for you to play around with the example
     // when resetting the application for doing a re-run (via the Application Reset Tool,
-    // http://docs.confluent.io/current/streams/developer-guide.html#application-reset-tool).
+    // https://docs.confluent.io/platform/current/streams/developer-guide/app-reset-tool.html).
     //
     // The drawback of cleaning up local state prior is that your app must rebuilt its local state from scratch, which
     // will take time and will require reading all the state-relevant data from the Kafka cluster over the network.
@@ -467,15 +467,36 @@ public class KafkaMusicExample {
 
   /**
    * Used in aggregations to keep track of the Top five songs
+   *
+   * Warning: this aggregator relies on the current order of execution
+   * for updates, namely that the subtractor (#remove) is called prior
+   * to the adder (#add). That is an implementation detail which,
+   * while it has remained stable for years, is not part of the public
+   * contract. There is a Kafka JIRA ticket requesting to make this
+   * order of execution part of the public contract.
+   * See https://issues.apache.org/jira/browse/KAFKA-12446
+   *
+   * In the meantime, be aware that if you follow this example
+   * your aggregator might no longer work correctly if future
+   * updates to Kafka Streams were to ever change the order of execution.
+   *
+   * The issue occurs for any aggregator that uses non-commutative functions
+   * while relying on a group by key which picks out the same entries as
+   * the upstream key.
    */
   static class TopFiveSongs implements Iterable<SongPlayCount> {
     private final Map<Long, SongPlayCount> currentSongs = new HashMap<>();
     private final TreeSet<SongPlayCount> topFive = new TreeSet<>((o1, o2) -> {
-      final int result = o2.getPlays().compareTo(o1.getPlays());
+      final Long o1Plays = o1.getPlays();
+      final Long o2Plays = o2.getPlays();
+
+      final int result = o2Plays.compareTo(o1Plays);
       if (result != 0) {
         return result;
       }
-      return o1.getSongId().compareTo(o2.getSongId());
+      final Long o1SongId = o1.getSongId();
+      final Long o2SongId = o2.getSongId();
+      return o1SongId.compareTo(o2SongId);
     });
 
     @Override
